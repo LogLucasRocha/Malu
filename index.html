@@ -14,14 +14,14 @@
     <div class="luz luz-direita" aria-hidden="true"></div>
 
     <header class="topo">
-      <a class="marca" href="#inicio" aria-label="Malu, voltar ao início"><span class="marca-simbolo" aria-hidden="true">M</span><span>Malu</span></a>
+      <a class="marca" href="#inicio" aria-label="Malu, voltar ao início">malu = mari + lucas 😋</a>
       <button class="botao-icone" id="abrir-configuracoes" type="button" aria-label="Abrir configurações" title="Configurações">⚙</button>
     </header>
 
     <main id="inicio">
       <section class="contador" aria-labelledby="titulo-contador">
         <p class="sobretitulo">Nosso tempo juntos</p>
-        <h1 id="titulo-contador">Cada sessão vira memória.</h1>
+        <h1 id="titulo-contador">Filmes para assistir no Airbnb</h1>
         <div class="tempo" id="tempo-juntos" aria-live="polite"><button class="link-botao" id="configurar-data" type="button">Defina a data do primeiro oi</button></div>
         <p class="proximo-aniversario" id="proximo-aniversario"></p>
       </section>
@@ -31,12 +31,6 @@
           <div class="cabecalho-painel"><div><p class="sobretitulo">Próxima indicação</p><h2 id="titulo-adicionar">Adicionar um filme</h2></div></div>
           <form id="form-filme">
             <div class="campo campo-largo"><label for="titulo">Título</label><input id="titulo" name="titulo" type="text" required maxlength="100" autocomplete="off" placeholder="Ex.: Central do Brasil"></div>
-            <div class="linha-campos">
-              <div class="campo"><label for="ano">Ano</label><input id="ano" name="ano" type="number" min="1888" max="2100" inputmode="numeric" placeholder="1998"></div>
-              <div class="campo"><label for="genero">Gênero</label><input id="genero" name="genero" type="text" maxlength="40" list="generos" placeholder="Drama">
-                <datalist id="generos"><option value="Ação"></option><option value="Animação"></option><option value="Comédia"></option><option value="Documentário"></option><option value="Drama"></option><option value="Ficção científica"></option><option value="Romance"></option><option value="Suspense"></option><option value="Terror"></option></datalist>
-              </div>
-            </div>
             <div class="campo"><label for="sugerido-por">Sugerido por</label><select id="sugerido-por" name="sugeridoPor"></select></div>
             <button class="botao botao-principal" type="submit">Adicionar à lista <span aria-hidden="true">＋</span></button>
           </form>
@@ -45,10 +39,7 @@
         <section class="painel sorteio" aria-labelledby="titulo-sorteio">
           <div class="cabecalho-painel"><div><p class="sobretitulo">Sem discussão no sofá</p><h2 id="titulo-sorteio">Sortear a sessão</h2></div><span class="ingresso" aria-hidden="true">🎟</span></div>
           <p class="texto-apoio">O sorteio considera apenas os filmes que ainda não foram assistidos.</p>
-          <div class="linha-campos">
-            <div class="campo"><label for="sorteio-genero">Gênero</label><select id="sorteio-genero"><option value="">Qualquer gênero</option></select></div>
-            <div class="campo"><label for="sorteio-pessoa">Indicação</label><select id="sorteio-pessoa"><option value="">De qualquer pessoa</option></select></div>
-          </div>
+          <div class="campo"><label for="sorteio-pessoa">Indicação</label><select id="sorteio-pessoa"><option value="">De qualquer pessoa</option></select></div>
           <button class="botao botao-destaque" id="sortear" type="button">Sortear agora <span aria-hidden="true">✦</span></button>
           <div class="resultado-sorteio" id="resultado-sorteio" hidden aria-live="assertive"><p>O filme da vez é</p><strong id="resultado-titulo"></strong><span id="resultado-detalhes"></span><button class="link-botao" id="marcar-sorteado" type="button">Marcar como assistido</button></div>
         </section>
@@ -68,7 +59,7 @@
       </section>
     </main>
 
-    <footer><p>Malu, um cinema só de vocês.</p><p class="aviso-local">Os dados ficam guardados somente neste navegador.</p></footer>
+    <footer><p>malu = mari + lucas 😋</p><p class="aviso-local">Os dados ficam guardados somente neste navegador.</p></footer>
 
     <dialog id="configuracoes">
       <form id="form-configuracoes" method="dialog">

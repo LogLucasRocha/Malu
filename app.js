@@ -1,10 +1,10 @@
 const CHAVE_FILMES = "malu:filmes:v1";
-const CHAVE_CONFIGURACOES = "malu:configuracoes:v1";
+const CHAVE_CONFIGURACOES = "malu:configuracoes:v2";
 
 const configuracoesPadrao = {
-  nomeUm: "Ma",
-  nomeDois: "Lu",
-  dataInicio: ""
+  nomeUm: "Maria Bonita",
+  nomeDois: "Lampião",
+  dataInicio: "2026-08-29T20:59"
 };
 
 const elementos = {
@@ -17,7 +17,6 @@ const elementos = {
   abas: [...document.querySelectorAll(".aba")],
   pendentes: document.querySelector("#total-pendentes"),
   assistidos: document.querySelector("#total-assistidos"),
-  sorteioGenero: document.querySelector("#sorteio-genero"),
   sorteioPessoa: document.querySelector("#sorteio-pessoa"),
   botaoSortear: document.querySelector("#sortear"),
   resultadoSorteio: document.querySelector("#resultado-sorteio"),
@@ -108,13 +107,10 @@ function preencherSelect(select, opcoes, rotuloInicial, valorAnterior = "") {
 function atualizarSelects() {
   const pessoaFormulario = elementos.sugeridoPor.value;
   const pessoaSorteio = elementos.sorteioPessoa.value;
-  const generoSorteio = elementos.sorteioGenero.value;
   const pessoas = opcoesPessoas();
-  const generos = [...new Set(filmes.map(filme => filme.genero).filter(Boolean))].sort((a, b) => a.localeCompare(b, "pt-BR"));
 
   preencherSelect(elementos.sugeridoPor, pessoas, null, pessoaFormulario);
   preencherSelect(elementos.sorteioPessoa, pessoas, "De qualquer pessoa", pessoaSorteio);
-  preencherSelect(elementos.sorteioGenero, generos, "Qualquer gênero", generoSorteio);
 }
 
 function criarItemFilme(filme) {
@@ -135,7 +131,7 @@ function criarItemFilme(filme) {
   titulo.textContent = filme.titulo;
   const meta = document.createElement("div");
   meta.className = "filme-meta";
-  const detalhes = [filme.ano, filme.genero, filme.sugeridoPor ? `indicação de ${filme.sugeridoPor}` : ""].filter(Boolean);
+  const detalhes = [filme.sugeridoPor ? `indicação de ${filme.sugeridoPor}` : ""].filter(Boolean);
   if (filme.assistidoEm) detalhes.push(`assistido em ${formatarData(filme.assistidoEm)}`);
   detalhes.forEach((detalhe, indice) => {
     const parte = document.createElement("span");
@@ -160,7 +156,7 @@ function filmesVisiveis() {
   const termo = normalizarTexto(elementos.busca.value);
   return filmes
     .filter(filme => filtroAtual === "todos" || (filtroAtual === "assistidos" ? filme.assistido : !filme.assistido))
-    .filter(filme => normalizarTexto(`${filme.titulo} ${filme.ano || ""} ${filme.genero || ""} ${filme.sugeridoPor || ""}`).includes(termo))
+    .filter(filme => normalizarTexto(`${filme.titulo} ${filme.sugeridoPor || ""}`).includes(termo))
     .sort((a, b) => new Date(b.criadoEm || 0) - new Date(a.criadoEm || 0));
 }
 
@@ -196,8 +192,6 @@ function adicionarFilme(evento) {
   filmes.push({
     id: criarId(),
     titulo,
-    ano: dados.get("ano") ? Number(dados.get("ano")) : null,
-    genero: String(dados.get("genero") || "").trim(),
     sugeridoPor: String(dados.get("sugeridoPor") || "").trim(),
     assistido: false,
     assistidoEm: null,
@@ -230,7 +224,6 @@ function removerFilme(id) {
 
 function sortearFilme() {
   let candidatos = filmes.filter(filme => !filme.assistido);
-  if (elementos.sorteioGenero.value) candidatos = candidatos.filter(filme => filme.genero === elementos.sorteioGenero.value);
   if (elementos.sorteioPessoa.value) candidatos = candidatos.filter(filme => filme.sugeridoPor === elementos.sorteioPessoa.value);
 
   if (!candidatos.length) {
@@ -243,7 +236,7 @@ function sortearFilme() {
   const escolhido = candidatos[Math.floor(Math.random() * candidatos.length)];
   filmeSorteadoId = escolhido.id;
   elementos.resultadoTitulo.textContent = escolhido.titulo;
-  elementos.resultadoDetalhes.textContent = [escolhido.ano, escolhido.genero, escolhido.sugeridoPor ? `indicação de ${escolhido.sugeridoPor}` : ""].filter(Boolean).join(" • ");
+  elementos.resultadoDetalhes.textContent = escolhido.sugeridoPor ? `indicação de ${escolhido.sugeridoPor}` : "";
   elementos.resultadoSorteio.hidden = false;
 }
 
@@ -361,8 +354,6 @@ function normalizarFilme(filme) {
   return {
     id: String(filme.id || criarId()),
     titulo: filme.titulo.trim().slice(0, 100),
-    ano: Number.isFinite(Number(filme.ano)) && filme.ano !== null && filme.ano !== "" ? Number(filme.ano) : null,
-    genero: String(filme.genero || "").slice(0, 40),
     sugeridoPor: String(filme.sugeridoPor || "").slice(0, 30),
     assistido: Boolean(filme.assistido),
     assistidoEm: filme.assistidoEm || null,
