@@ -3,9 +3,85 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinema com Airbnb</title>
+    <meta name="theme-color" content="#160e1d">
+    <meta name="description" content="A lista de filmes e as sessões de cinema da Malu.">
+    <title>Malu — nosso cinema</title>
+    <link rel="stylesheet" href="estilo.css">
+    <script src="app.js" defer></script>
   </head>
   <body>
-    <h1>Cinema com Airbnb 🎬</h1>
+    <div class="luz luz-esquerda" aria-hidden="true"></div>
+    <div class="luz luz-direita" aria-hidden="true"></div>
+
+    <header class="topo">
+      <a class="marca" href="#inicio" aria-label="Malu, voltar ao início"><span class="marca-simbolo" aria-hidden="true">M</span><span>Malu</span></a>
+      <button class="botao-icone" id="abrir-configuracoes" type="button" aria-label="Abrir configurações" title="Configurações">⚙</button>
+    </header>
+
+    <main id="inicio">
+      <section class="contador" aria-labelledby="titulo-contador">
+        <p class="sobretitulo">Nosso tempo juntos</p>
+        <h1 id="titulo-contador">Cada sessão vira memória.</h1>
+        <div class="tempo" id="tempo-juntos" aria-live="polite"><button class="link-botao" id="configurar-data" type="button">Defina a data do primeiro oi</button></div>
+        <p class="proximo-aniversario" id="proximo-aniversario"></p>
+      </section>
+
+      <div class="grade-principal">
+        <section class="painel adicionar" aria-labelledby="titulo-adicionar">
+          <div class="cabecalho-painel"><div><p class="sobretitulo">Próxima indicação</p><h2 id="titulo-adicionar">Adicionar um filme</h2></div></div>
+          <form id="form-filme">
+            <div class="campo campo-largo"><label for="titulo">Título</label><input id="titulo" name="titulo" type="text" required maxlength="100" autocomplete="off" placeholder="Ex.: Central do Brasil"></div>
+            <div class="linha-campos">
+              <div class="campo"><label for="ano">Ano</label><input id="ano" name="ano" type="number" min="1888" max="2100" inputmode="numeric" placeholder="1998"></div>
+              <div class="campo"><label for="genero">Gênero</label><input id="genero" name="genero" type="text" maxlength="40" list="generos" placeholder="Drama">
+                <datalist id="generos"><option value="Ação"></option><option value="Animação"></option><option value="Comédia"></option><option value="Documentário"></option><option value="Drama"></option><option value="Ficção científica"></option><option value="Romance"></option><option value="Suspense"></option><option value="Terror"></option></datalist>
+              </div>
+            </div>
+            <div class="campo"><label for="sugerido-por">Sugerido por</label><select id="sugerido-por" name="sugeridoPor"></select></div>
+            <button class="botao botao-principal" type="submit">Adicionar à lista <span aria-hidden="true">＋</span></button>
+          </form>
+        </section>
+
+        <section class="painel sorteio" aria-labelledby="titulo-sorteio">
+          <div class="cabecalho-painel"><div><p class="sobretitulo">Sem discussão no sofá</p><h2 id="titulo-sorteio">Sortear a sessão</h2></div><span class="ingresso" aria-hidden="true">🎟</span></div>
+          <p class="texto-apoio">O sorteio considera apenas os filmes que ainda não foram assistidos.</p>
+          <div class="linha-campos">
+            <div class="campo"><label for="sorteio-genero">Gênero</label><select id="sorteio-genero"><option value="">Qualquer gênero</option></select></div>
+            <div class="campo"><label for="sorteio-pessoa">Indicação</label><select id="sorteio-pessoa"><option value="">De qualquer pessoa</option></select></div>
+          </div>
+          <button class="botao botao-destaque" id="sortear" type="button">Sortear agora <span aria-hidden="true">✦</span></button>
+          <div class="resultado-sorteio" id="resultado-sorteio" hidden aria-live="assertive"><p>O filme da vez é</p><strong id="resultado-titulo"></strong><span id="resultado-detalhes"></span><button class="link-botao" id="marcar-sorteado" type="button">Marcar como assistido</button></div>
+        </section>
+      </div>
+
+      <section class="secao-lista" aria-labelledby="titulo-lista">
+        <div class="cabecalho-lista">
+          <div><p class="sobretitulo">Nossa curadoria</p><h2 id="titulo-lista">Filmes</h2></div>
+          <div class="estatisticas" aria-label="Resumo da lista"><span><strong id="total-pendentes">0</strong> na fila</span><span><strong id="total-assistidos">0</strong> assistidos</span></div>
+        </div>
+        <div class="ferramentas-lista">
+          <div class="abas" role="group" aria-label="Filtrar filmes"><button class="aba ativa" type="button" data-filtro="todos" aria-pressed="true">Todos</button><button class="aba" type="button" data-filtro="pendentes" aria-pressed="false">Na fila</button><button class="aba" type="button" data-filtro="assistidos" aria-pressed="false">Assistidos</button></div>
+          <label class="busca"><span class="visualmente-oculto">Buscar filme</span><span aria-hidden="true">⌕</span><input id="busca" type="search" placeholder="Buscar um filme"></label>
+        </div>
+        <ul class="lista-filmes" id="lista-filmes"></ul>
+        <div class="estado-vazio" id="estado-vazio"><span aria-hidden="true">🎬</span><h3>Sua primeira sessão começa aqui</h3><p>Adicione um filme acima e ele aparecerá nesta lista.</p></div>
+      </section>
+    </main>
+
+    <footer><p>Malu, um cinema só de vocês.</p><p class="aviso-local">Os dados ficam guardados somente neste navegador.</p></footer>
+
+    <dialog id="configuracoes">
+      <form id="form-configuracoes" method="dialog">
+        <div class="cabecalho-dialogo"><div><p class="sobretitulo">Deixem com a cara de vocês</p><h2>Configurações</h2></div><button class="botao-icone" id="fechar-configuracoes" type="button" aria-label="Fechar configurações">×</button></div>
+        <div class="linha-campos"><div class="campo"><label for="nome-um">Primeiro nome</label><input id="nome-um" name="nomeUm" type="text" maxlength="30" required></div><div class="campo"><label for="nome-dois">Segundo nome</label><input id="nome-dois" name="nomeDois" type="text" maxlength="30" required></div></div>
+        <div class="campo"><label for="data-inicio">Data e hora do primeiro oi</label><input id="data-inicio" name="dataInicio" type="datetime-local"></div>
+        <button class="botao botao-principal" type="submit">Salvar configurações</button>
+        <div class="divisor"></div>
+        <h3>Backup da lista</h3>
+        <p class="texto-apoio">Como os dados não vão para a nuvem, salve uma cópia de vez em quando.</p>
+        <div class="acoes-backup"><button class="botao botao-secundario" id="exportar" type="button">Baixar backup</button><label class="botao botao-secundario" for="arquivo-backup">Restaurar backup</label><input class="visualmente-oculto" id="arquivo-backup" type="file" accept="application/json,.json"></div>
+      </form>
+    </dialog>
+    <div class="notificacao" id="notificacao" role="status" aria-live="polite"></div>
   </body>
 </html>
