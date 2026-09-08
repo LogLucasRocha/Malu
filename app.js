@@ -1,11 +1,33 @@
 const CHAVE_FILMES = "malu:filmes:v1";
 const CHAVE_CONFIGURACOES = "malu:configuracoes:v2";
+const CHAVE_LISTA_INICIAL = "malu:lista-inicial:setembro-2026";
 
 const configuracoesPadrao = {
   nomeUm: "Maria Bonita",
   nomeDois: "Lampião",
   dataInicio: "2026-08-29T20:59"
 };
+
+const filmesIniciais = [
+  { titulo: "Jogos Vorazes", assistido: true, sugeridoPor: "Marina" },
+  { titulo: "Jogos Vorazes: Em Chamas", assistido: false, sugeridoPor: "Marina" },
+  { titulo: "Jogos Vorazes: A Esperança (1)", assistido: false, sugeridoPor: "Marina" },
+  { titulo: "Jogos Vorazes: A Esperança (2)", assistido: false, sugeridoPor: "Marina" },
+  { titulo: "Jogos Vorazes: Cantiga", assistido: false, sugeridoPor: "Lucas" },
+  { titulo: "Blade Runner 2049", assistido: false, sugeridoPor: "Lucas" },
+  { titulo: "Transformers", assistido: false, sugeridoPor: "Lucas" },
+  { titulo: "Amelie Poulain", assistido: false, sugeridoPor: "Marina" },
+  { titulo: "High School Musical 1", assistido: false, sugeridoPor: "Marina" },
+  { titulo: "Taxi Driver", assistido: false, sugeridoPor: "Lucas" },
+  { titulo: "Vertigo", assistido: false, sugeridoPor: "Marina" },
+  { titulo: "Donnie Darko", assistido: false, sugeridoPor: "Lucas" },
+  { titulo: "Bye Bye Brazil", assistido: false, sugeridoPor: "Lucas" },
+  { titulo: "Buddy The Unicorn", assistido: false, sugeridoPor: "Marina" },
+  { titulo: "Romeo + Juliet", assistido: false, sugeridoPor: "Lucas" },
+  { titulo: "Acampamento Miasma: Adolescência, Sexo e Morte", assistido: false, sugeridoPor: "Lucas" },
+  { titulo: "Emma", assistido: false, sugeridoPor: "Lucas" },
+  { titulo: "Jogos Vorazes: Amanhecer Na Colheita (Novembro)", assistido: false, sugeridoPor: "Marina" }
+];
 
 const elementos = {
   formularioFilme: document.querySelector("#form-filme"),
@@ -67,6 +89,31 @@ function salvarDados() {
   }
 }
 
+function incluirListaInicial() {
+  if (localStorage.getItem(CHAVE_LISTA_INICIAL)) return;
+
+  filmesIniciais.forEach((filmeInicial, indice) => {
+    const existente = filmes.find(filme => normalizarTexto(filme.titulo) === normalizarTexto(filmeInicial.titulo));
+    if (existente) {
+      existente.sugeridoPor ||= filmeInicial.sugeridoPor;
+      existente.assistido ||= filmeInicial.assistido;
+      return;
+    }
+
+    filmes.push({
+      id: criarId(),
+      titulo: filmeInicial.titulo,
+      sugeridoPor: filmeInicial.sugeridoPor,
+      assistido: filmeInicial.assistido,
+      assistidoEm: null,
+      criadoEm: new Date(Date.now() + indice).toISOString()
+    });
+  });
+
+  salvarDados();
+  localStorage.setItem(CHAVE_LISTA_INICIAL, "1");
+}
+
 function notificar(mensagem) {
   clearTimeout(temporizadorNotificacao);
   elementos.notificacao.textContent = mensagem;
@@ -107,7 +154,10 @@ function preencherSelect(select, opcoes, rotuloInicial, valorAnterior = "") {
 function atualizarSelects() {
   const pessoaFormulario = elementos.sugeridoPor.value;
   const pessoaSorteio = elementos.sorteioPessoa.value;
-  const pessoas = opcoesPessoas();
+  const pessoas = [...new Set([
+    ...opcoesPessoas(),
+    ...filmes.map(filme => filme.sugeridoPor).filter(Boolean)
+  ])];
 
   preencherSelect(elementos.sugeridoPor, pessoas, null, pessoaFormulario);
   preencherSelect(elementos.sorteioPessoa, pessoas, "De qualquer pessoa", pessoaSorteio);
@@ -409,6 +459,7 @@ elementos.dialogo.addEventListener("click", evento => {
   if (evento.target === elementos.dialogo) elementos.dialogo.close();
 });
 
+incluirListaInicial();
 renderizar();
 atualizarTempo();
 setInterval(atualizarTempo, 1000);
