@@ -1,6 +1,7 @@
 const CHAVE_FILMES = "malu:filmes:v1";
 const CHAVE_CONFIGURACOES = "malu:configuracoes:v2";
 const CHAVE_LISTA_INICIAL = "malu:lista-inicial:setembro-2026";
+const CHAVE_MIGRACAO_APELIDOS = "malu:migracao-apelidos:v1";
 
 const configuracoesPadrao = {
   nomeUm: "Maria Bonita",
@@ -89,13 +90,19 @@ function salvarDados() {
   }
 }
 
+function nomeDeExibicao(nome) {
+  if (nome === "Marina") return "Maria Bonita";
+  if (nome === "Lucas") return "Lampião";
+  return nome;
+}
+
 function incluirListaInicial() {
   if (localStorage.getItem(CHAVE_LISTA_INICIAL)) return;
 
   filmesIniciais.forEach((filmeInicial, indice) => {
     const existente = filmes.find(filme => normalizarTexto(filme.titulo) === normalizarTexto(filmeInicial.titulo));
     if (existente) {
-      existente.sugeridoPor ||= filmeInicial.sugeridoPor;
+      existente.sugeridoPor ||= nomeDeExibicao(filmeInicial.sugeridoPor);
       existente.assistido ||= filmeInicial.assistido;
       return;
     }
@@ -103,7 +110,7 @@ function incluirListaInicial() {
     filmes.push({
       id: criarId(),
       titulo: filmeInicial.titulo,
-      sugeridoPor: filmeInicial.sugeridoPor,
+      sugeridoPor: nomeDeExibicao(filmeInicial.sugeridoPor),
       assistido: filmeInicial.assistido,
       assistidoEm: null,
       criadoEm: new Date(Date.now() + indice).toISOString()
@@ -112,6 +119,13 @@ function incluirListaInicial() {
 
   salvarDados();
   localStorage.setItem(CHAVE_LISTA_INICIAL, "1");
+}
+
+function migrarApelidos() {
+  if (localStorage.getItem(CHAVE_MIGRACAO_APELIDOS)) return;
+  filmes = filmes.map(filme => ({ ...filme, sugeridoPor: nomeDeExibicao(filme.sugeridoPor) }));
+  salvarDados();
+  localStorage.setItem(CHAVE_MIGRACAO_APELIDOS, "1");
 }
 
 function notificar(mensagem) {
@@ -404,7 +418,7 @@ function normalizarFilme(filme) {
   return {
     id: String(filme.id || criarId()),
     titulo: filme.titulo.trim().slice(0, 100),
-    sugeridoPor: String(filme.sugeridoPor || "").slice(0, 30),
+    sugeridoPor: nomeDeExibicao(String(filme.sugeridoPor || "").slice(0, 30)),
     assistido: Boolean(filme.assistido),
     assistidoEm: filme.assistidoEm || null,
     criadoEm: filme.criadoEm || new Date().toISOString()
@@ -460,6 +474,7 @@ elementos.dialogo.addEventListener("click", evento => {
 });
 
 incluirListaInicial();
+migrarApelidos();
 renderizar();
 atualizarTempo();
 setInterval(atualizarTempo, 1000);
